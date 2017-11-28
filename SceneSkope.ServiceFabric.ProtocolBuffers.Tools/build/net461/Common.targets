@@ -1,0 +1,42 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);RCS1168</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProtocCodegen Include="*.proto" />
+  </ItemGroup>
+  <Target Name="ProtocSetup" BeforeTargets="BeforeClean;RunGrpc">
+    <ItemGroup>
+      <ProtocGenCs Include="@(ProtocCodegen -> '$(IntermediateOutputPath)%(FileName).cs')">
+        <AutoGen>true</AutoGen>
+        <DependentUpon>%(FileName).proto</DependentUpon>
+      </ProtocGenCs>
+      <ProtocGenGrpcCs Include="@(ProtocCodegen -> '$(IntermediateOutputPath)%(FileName)Grpc.cs')">
+        <DependentUpon>$([System.String]::Copy('%(FileName).proto').Replace("Grpc", ""))</DependentUpon>
+        <AutoGen>true</AutoGen>
+      </ProtocGenGrpcCs>
+    </ItemGroup>
+    <ItemGroup>
+      <FileWrites Include="@(ProtocGenCs);@(ProtocGenGrpcCs)" />
+    </ItemGroup>
+    <Message Text="Files = @(FileWrites)" Importance="High" />
+  </Target>
+  <Target Name="RunGrpc" Inputs="@(ProtocCodegen)" Outputs="@(ProtocGenCs);@(ProtocGenGrpcCs)" BeforeTargets="CoreCompile" Condition=" '@(ProtocCodegen)' != '' ">
+    <ItemGroup>
+      <GrpcTools Include="@(PackageDefinitions)" Condition="%(Name) == 'Grpc.Tools'" />
+    </ItemGroup>
+    <Message Text="Grpc tools = @(GrpcTools)" Importance="High" />
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <PropertyGroup>
+      <GrpcToolsPath>%(GrpcTools.ResolvedPath)/tools/$(GrpcToolOs)_$(GrpcToolArch)</GrpcToolsPath>
+    </PropertyGroup>
+    <Message Text="GrpcToolsPath: $(GrpcToolsPath)" />
+    <Exec Command="$(GrpcToolsPath)/protoc.exe -I . --csharp_out $(IntermediateOutputPath) --grpc_out $(IntermediateOutputPath) %(ProtocCodegen.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/grpc_csharp_plugin.exe" />
+    <ItemGroup>
+      <Compile Include="@(ProtocGenCs)" />
+      <Compile Include="@(ProtocGenGrpcCs)" Condition="Exists('%(Identity)')" />
+    </ItemGroup>
+    <Message Text="Compile: @(Compile)" Importance="High" />
+  </Target>
+</Project>
