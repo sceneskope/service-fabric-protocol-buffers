@@ -20,19 +20,20 @@
     <ItemGroup>
       <FileWrites Include="@(ProtocGenCs);@(ProtocGenGrpcCs)" />
     </ItemGroup>
-    <Message Text="Files = @(FileWrites)" Importance="High" />
   </Target>
   <Target Name="RunGrpc" Inputs="@(ProtocCodegen)" Outputs="@(ProtocGenCs);@(ProtocGenGrpcCs)" BeforeTargets="CoreCompile" Condition=" '@(ProtocCodegen)' != '' ">
     <ItemGroup>
       <GrpcTools Include="@(PackageDefinitions)" Condition="%(Name) == 'Grpc.Tools'" />
+      <ProtobufTools Include="@(PackageDefinitions)" Condition="%(Name) == 'Google.Protobuf.Tools'" />
     </ItemGroup>
     <Message Text="Grpc tools = @(GrpcTools)" Importance="High" />
+    <Message Text="Protobuf tools = @(ProtobufTools)" Importance="High" />
     <MakeDir Directories="$(IntermediateOutputPath)" />
     <PropertyGroup>
       <GrpcToolsPath>%(GrpcTools.ResolvedPath)/tools/$(GrpcToolOs)_$(GrpcToolArch)</GrpcToolsPath>
+      <ProtobufIncludePath>-I %(ProtobufTools.ResolvedPath)/tools</ProtobufIncludePath>
     </PropertyGroup>
-    <Message Text="GrpcToolsPath: $(GrpcToolsPath)" />
-    <Exec Command="$(GrpcToolsPath)/protoc.exe -I . --csharp_out $(IntermediateOutputPath) --grpc_out $(IntermediateOutputPath) %(ProtocCodegen.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/grpc_csharp_plugin.exe" />
+    <Exec Command="$(GrpcToolsPath)/protoc.exe -I . $(ProtobufIncludePath) --csharp_out $(IntermediateOutputPath) --grpc_out $(IntermediateOutputPath) %(ProtocCodegen.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/grpc_csharp_plugin.exe" />
     <ItemGroup>
       <Compile Include="@(ProtocGenCs)" />
       <Compile Include="@(ProtocGenGrpcCs)" Condition="Exists('%(Identity)')" />
