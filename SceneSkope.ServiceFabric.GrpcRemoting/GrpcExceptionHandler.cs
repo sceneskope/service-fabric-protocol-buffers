@@ -16,10 +16,18 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
         public bool TryHandleException(ExceptionInformation exceptionInformation, OperationRetrySettings retrySettings, out ExceptionHandlingResult result)
         {
             Log.Information(exceptionInformation.Exception, "Try handle exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
-            if (exceptionInformation.Exception is RpcException)
+            if (exceptionInformation.Exception is RpcException rpcEx)
             {
-                result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, true, retrySettings, retrySettings.DefaultMaxRetryCount);
-                return true;
+                switch (rpcEx.Status.StatusCode)
+                {
+                    case StatusCode.Cancelled:
+                        result = new ExceptionHandlingThrowResult { ExceptionToThrow = exceptionInformation.Exception };
+                        return false;
+
+                    default:
+                        result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, true, retrySettings, retrySettings.DefaultMaxRetryCount);
+                        return true;
+                }
             }
             else
             {

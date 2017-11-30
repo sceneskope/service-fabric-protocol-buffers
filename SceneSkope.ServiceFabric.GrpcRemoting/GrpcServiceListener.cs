@@ -23,8 +23,8 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public string EndpointName { get; }
 
-        public GrpcServiceListener(StatefulServiceContext context, ILogger logger, IEnumerable<ServerServiceDefinition> services
-            , string endpointName = "GrpcServiceEndpoint")
+        public GrpcServiceListener(StatefulServiceContext context, ILogger logger, IEnumerable<ServerServiceDefinition> services,
+            string endpointName = "GrpcServiceEndpoint")
         {
             Context = context;
             Log = logger;
@@ -78,6 +78,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         private async Task StopServerAsync()
         {
+            Log.Information("Stopping gRPC server");
             try
             {
                 await _server?.ShutdownAsync();
