@@ -21,11 +21,15 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public ILogger Log { get; }
 
-        public GrpcServiceListener(StatefulServiceContext context, ILogger logger, IEnumerable<ServerServiceDefinition> services)
+        public string EndpointName { get; }
+
+        public GrpcServiceListener(StatefulServiceContext context, ILogger logger, IEnumerable<ServerServiceDefinition> services,
+            string endpointName = "GrpcServiceEndpoint")
         {
             Context = context;
             Log = logger;
             Services = services;
+            EndpointName = endpointName;
         }
 
         public void Abort()
@@ -44,7 +48,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            var serviceEndpoint = Context.CodePackageActivationContext.GetEndpoint("GrpcServiceEndpoint");
+            var serviceEndpoint = Context.CodePackageActivationContext.GetEndpoint(EndpointName);
             var port = serviceEndpoint.Port;
             var host = FabricRuntime.GetNodeContext().IPAddressOrFQDN;
 
@@ -72,16 +76,24 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             }
         }
 
-        private async Task StopServerAsync()
+        private Task StopServerAsync()
         {
+            Log.Information("Stopping gRPC server");
+            return InternalStopServerAsync();
+        }
+
+        private async Task InternalStopServerAsync()
+        {
+            Log.Information("Really stopping server - or at least trying");
             try
             {
-                await _server?.ShutdownAsync();
+                await _server?.KillAsync();
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to shutdown server: {Exception}", ex.Message);
             }
+            Log.Information("Probably shutdown");
         }
     }
 }

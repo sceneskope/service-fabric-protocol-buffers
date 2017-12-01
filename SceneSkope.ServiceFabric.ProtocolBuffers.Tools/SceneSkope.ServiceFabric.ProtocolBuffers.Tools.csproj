@@ -3,6 +3,7 @@
     <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf.Tools" Version="3.4.0" />
     <PackageReference Include="Grpc.Tools" Version="1.7.1" PrivateAssets="None" />
     <Content Include="build/**">
       <PackagePath>build</PackagePath>
