@@ -76,17 +76,24 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             }
         }
 
-        private async Task StopServerAsync()
+        private Task StopServerAsync()
         {
             Log.Information("Stopping gRPC server");
+            return InternalStopServerAsync();
+        }
+
+        private async Task InternalStopServerAsync()
+        {
+            Log.Information("Really stopping server - or at least trying");
             try
             {
-                await _server?.ShutdownAsync();
+                await _server?.KillAsync();
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to shutdown server: {Exception}", ex.Message);
             }
+            Log.Information("Probably shutdown");
         }
     }
 }
