@@ -34,13 +34,13 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public void Abort()
         {
-            Log.Information("Aborting server");
+            Log.Debug("Aborting server");
             StopServerAsync().Wait();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            Log.Information("Closing server");
+            Log.Debug("Closing server");
             return StopServerAsync();
         }
 
@@ -52,7 +52,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             var port = serviceEndpoint.Port;
             var host = FabricRuntime.GetNodeContext().IPAddressOrFQDN;
 
-            Log.Information("Starting gRPC server on http://{Host}:{Port}", host, port);
+            Log.Debug("Starting gRPC server on http://{Host}:{Port}", host, port);
             try
             {
                 var server = new Server
@@ -78,13 +78,13 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         private Task StopServerAsync()
         {
-            Log.Information("Stopping gRPC server");
+            Log.Debug("Stopping gRPC server");
             return InternalStopServerAsync();
         }
 
         private async Task InternalStopServerAsync()
         {
-            Log.Information("Really stopping server - or at least trying");
+            Log.Debug("Really stopping server - or at least trying");
             try
             {
                 await _server?.KillAsync();
@@ -93,7 +93,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             {
                 Log.Error(ex, "Failed to shutdown server: {Exception}", ex.Message);
             }
-            Log.Information("Probably shutdown");
+            Log.Debug("Probably shutdown");
         }
     }
 }

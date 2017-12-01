@@ -42,7 +42,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         private Entry CreateEntry(TKey key)
         {
-            Log.Information("Create new entry for {@Key}", key);
+            Log.Debug("Create new entry for {@Key}", key);
             var partitionKey = _keyConverter(key);
             var client = _factory.CreateProxy(partitionKey);
             return new Entry(client);

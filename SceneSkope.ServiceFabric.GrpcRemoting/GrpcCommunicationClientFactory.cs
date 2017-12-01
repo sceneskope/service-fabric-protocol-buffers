@@ -26,33 +26,33 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         private void GrpcCommunicationClientFactory_ClientDisconnected(object sender, CommunicationClientEventArgs<GrpcCommunicationClient<TClient>> e)
         {
-            Log.Information("Client {Hash} disconnected: {Target}, {Resolved}, {State}",
+            Log.Debug("Client {Hash} disconnected: {Target}, {Resolved}, {State}",
                 e.Client.GetHashCode(), e.Client.Channel.Target, e.Client.Channel.ResolvedTarget, e.Client.Channel.State);
         }
 
         private void GrpcCommunicationClientFactory_ClientConnected(object sender, CommunicationClientEventArgs<GrpcCommunicationClient<TClient>> e)
         {
-            Log.Information("Client {Hash} connected: {Target}, {Resolved}, {State}",
+            Log.Debug("Client {Hash} connected: {Target}, {Resolved}, {State}",
                 e.Client.GetHashCode(), e.Client.Channel.Target, e.Client.Channel.ResolvedTarget, e.Client.Channel.State);
         }
 
         protected override void AbortClient(GrpcCommunicationClient<TClient> client)
         {
-            Log.Information("Abort client {Hash} for: {Target}, {Resolved}, {State}",
-                client.GetHashCode(), client.Channel.Target, client.Channel.ResolvedTarget, client.Channel.State);
+            Log.Debug("Abort client for: {Target}, {Resolved}, {State}",
+                client.Channel.Target, client.Channel.ResolvedTarget, client.Channel.State);
             client.Channel.ShutdownAsync().Wait();
         }
 
-        protected override async Task<GrpcCommunicationClient<TClient>> CreateClientAsync(string endpoint, CancellationToken cancellationToken)
+        protected override Task<GrpcCommunicationClient<TClient>> CreateClientAsync(string endpoint, CancellationToken cancellationToken)
         {
+            Log.Debug("Creating client for {Endpoint}", endpoint);
             var channel = new Channel(endpoint.Replace("http://", string.Empty), ChannelCredentials.Insecure);
-            await channel.ConnectAsync().ConfigureAwait(false);
             var client = new GrpcCommunicationClient<TClient>(channel);
-            Log.Information("Create client for {Endpoint}: {Hash}", endpoint, client.GetHashCode());
-            return client;
+            Log.Debug("Created client for {Endpoint}: {Hash}", endpoint, client.GetHashCode());
+            return Task.FromResult(client);
         }
 
-        protected override bool ValidateClient(GrpcCommunicationClient<TClient> client) => client.Channel.State == ChannelState.Ready;
+        protected override bool ValidateClient(GrpcCommunicationClient<TClient> client) => client.Channel.State != ChannelState.Shutdown;
 
         protected override bool ValidateClient(string endpoint, GrpcCommunicationClient<TClient> client) =>
             client.Channel.Target.Equals(endpoint) && ValidateClient(client);

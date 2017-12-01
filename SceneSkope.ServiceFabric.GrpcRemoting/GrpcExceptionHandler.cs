@@ -20,25 +20,25 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
                 switch (rpcEx.Status.StatusCode)
                 {
                     case StatusCode.Unavailable when rpcEx.Status.Detail == "Endpoint read failed":
-                        Log.Information(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
+                        Log.Debug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
                         result = null;
                         return false;
 
                     case StatusCode.Cancelled:
                     case StatusCode.Unavailable:
-                        Log.Warning(exceptionInformation.Exception, "Not transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
+                        Log.Debug(exceptionInformation.Exception, "Not transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
                         result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, false, retrySettings, int.MaxValue);
                         return true;
 
                     default:
-                        Log.Information(exceptionInformation.Exception, "Transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
+                        Log.Debug(exceptionInformation.Exception, "Transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
                         result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, true, retrySettings, int.MaxValue);
                         return true;
                 }
             }
             else
             {
-                Log.Information(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
+                Log.Debug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
                 result = null;
                 return false;
             }
