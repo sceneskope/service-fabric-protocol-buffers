@@ -30,7 +30,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null)
         {
             var realServiceUri = serviceUri ?? ServiceUri ?? throw new ArgumentNullException("A service URI must be specified");
-            Log.Information("Create proxy for {Uri} {@Key}", realServiceUri, partitionKey);
+            Log.Debug("Create proxy for {Uri} {@Key}", realServiceUri, partitionKey);
             return new ServicePartitionClient<GrpcCommunicationClient<TClient>>(CommunicationClientFactory, realServiceUri, partitionKey,
                 targetReplicaSelector, listenerName, retrySettings);
         }
