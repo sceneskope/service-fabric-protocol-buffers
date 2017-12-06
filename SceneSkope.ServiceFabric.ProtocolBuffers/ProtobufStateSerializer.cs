@@ -11,14 +11,18 @@ namespace SceneSkope.ServiceFabric.ProtocolBuffers
 
         public T Read(T baseValue, BinaryReader binaryReader)
         {
+            var length = binaryReader.ReadInt32();
+            var buffer = binaryReader.ReadBytes(length);
             var value = baseValue ?? new T();
-            value.MergeFrom(binaryReader.BaseStream);
+            value.MergeFrom(buffer);
             return value;
         }
 
         public void Write(T value, BinaryWriter binaryWriter)
         {
-            value.WriteTo(binaryWriter.BaseStream);
+            var buffer = value.ToByteArray();
+            binaryWriter.Write(buffer.Length);
+            binaryWriter.Write(buffer);
         }
 
         public void Write(T baseValue, T targetValue, BinaryWriter binaryWriter) => Write(targetValue, binaryWriter);
