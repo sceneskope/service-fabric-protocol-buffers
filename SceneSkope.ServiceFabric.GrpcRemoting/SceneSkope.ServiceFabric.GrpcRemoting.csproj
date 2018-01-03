@@ -5,7 +5,7 @@
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Grpc.Core" Version="1.7.1" IncludeAssets="Compile" PrivateAssets="All" />
+    <PackageReference Include="Grpc.Core" Version="1.8.0" IncludeAssets="Compile" PrivateAssets="All" />
     <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="2.8.232" />
     <PackageReference Include="Serilog" Version="2.6.0" />
   </ItemGroup>
