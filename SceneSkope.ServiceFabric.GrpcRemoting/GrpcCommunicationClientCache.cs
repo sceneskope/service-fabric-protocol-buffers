@@ -63,5 +63,22 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
                 throw;
             }
         }
+
+        public async Task<TRet> ExecuteAsync<TRet>(TKey key, Func<TClient, Task<TRet>> handler)
+        {
+            var entry = _cache.GetOrAdd(key, CreateEntry);
+            try
+            {
+                var result = await entry.Client.InvokeWithRetryAsync(c => handler(c.Client)).ConfigureAwait(false);
+                entry.LastUsedTicks = DateTime.UtcNow.Ticks;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error invoking: {Exception}", ex.Message);
+                _cache.TryRemove(key, out var _);
+                throw;
+            }
+        }
     }
 }
