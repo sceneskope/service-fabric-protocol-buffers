@@ -2,19 +2,23 @@
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 using System.Fabric;
+using static SceneSkope.ServiceFabric.GrpcRemoting.ChannelCache;
 
 namespace SceneSkope.ServiceFabric.GrpcRemoting
 {
     public class GrpcCommunicationClient<TClient> : ICommunicationClient
         where TClient : ClientBase<TClient>
     {
+        public Guid Id { get; } = Guid.NewGuid();
         public TClient Client { get; }
-        public Channel Channel { get; }
+        public ChannelEntry ChannelEntry { get; }
+        public string ConnectionAddress { get; }
 
-        internal GrpcCommunicationClient(Channel channel)
+        internal GrpcCommunicationClient(string connectionAddress, ChannelEntry channelEntry, TClient client)
         {
-            Client = (TClient)Activator.CreateInstance(typeof(TClient), channel);
-            Channel = channel;
+            Client = client;
+            ChannelEntry = channelEntry;
+            ConnectionAddress = connectionAddress;
         }
 
         public ResolvedServicePartition ResolvedServicePartition { get; set; }

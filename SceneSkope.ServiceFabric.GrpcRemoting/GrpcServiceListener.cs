@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
@@ -34,13 +34,13 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public void Abort()
         {
-            Log.Debug("Aborting server");
+            Log.LogDebug("Aborting server");
             StopServerAsync().Wait();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            Log.Debug("Closing server");
+            Log.LogDebug("Closing server");
             return StopServerAsync();
         }
 
@@ -52,7 +52,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             var port = serviceEndpoint.Port;
             var host = FabricRuntime.GetNodeContext().IPAddressOrFQDN;
 
-            Log.Debug("Starting gRPC server on http://{Host}:{Port}", host, port);
+            Log.LogDebug("Starting gRPC server on http://{Host}:{Port}", host, port);
             try
             {
                 var server = new Server
@@ -69,7 +69,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Error starting server: {Exception}", ex.Message);
+                Log.LogError(ex, "Error starting server: {Exception}", ex.Message);
                 await StopServerAsync().ConfigureAwait(false);
 
                 throw;
@@ -78,22 +78,22 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         private Task StopServerAsync()
         {
-            Log.Debug("Stopping gRPC server");
+            Log.LogDebug("Stopping gRPC server");
             return InternalStopServerAsync();
         }
 
         private async Task InternalStopServerAsync()
         {
-            Log.Debug("Really stopping server - or at least trying");
+            Log.LogDebug("Really stopping server - or at least trying");
             try
             {
                 await _server?.KillAsync();
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to shutdown server: {Exception}", ex.Message);
+                Log.LogError(ex, "Failed to shutdown server: {Exception}", ex.Message);
             }
-            Log.Debug("Probably shutdown");
+            Log.LogDebug("Probably shutdown");
         }
     }
 }

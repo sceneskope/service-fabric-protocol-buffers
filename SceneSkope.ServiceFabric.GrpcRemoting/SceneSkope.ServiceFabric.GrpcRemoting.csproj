@@ -1,13 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Grpc.Core" Version="1.9.0" IncludeAssets="Compile" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="3.0.456" />
-    <PackageReference Include="Serilog" Version="2.6.0" />
+    <PackageReference Include="Grpc.Core" Version="1.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.0" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="3.1.283" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0" />
+    <PackageReference Include="SceneSkope.HashingFunctions" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
