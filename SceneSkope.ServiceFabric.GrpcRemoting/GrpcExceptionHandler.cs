@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.Services.Communication.Client;
-using Serilog;
 
 namespace SceneSkope.ServiceFabric.GrpcRemoting
 {
@@ -20,25 +20,26 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
                 switch (rpcEx.Status.StatusCode)
                 {
                     case StatusCode.Unavailable when rpcEx.Status.Detail == "Endpoint read failed":
-                        Log.Debug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
+                        Log.LogDebug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
                         result = null;
                         return false;
 
-                    case StatusCode.Cancelled:
                     case StatusCode.Unavailable:
-                        Log.Debug(exceptionInformation.Exception, "Not transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
+                    case StatusCode.Unknown:
+                    case StatusCode.Cancelled:
+                        Log.LogDebug(exceptionInformation.Exception, "Not transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
                         result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, false, retrySettings, int.MaxValue);
                         return true;
 
                     default:
-                        Log.Debug(exceptionInformation.Exception, "Transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
+                        Log.LogDebug(exceptionInformation.Exception, "Transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
                         result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, true, retrySettings, int.MaxValue);
                         return true;
                 }
             }
             else
             {
-                Log.Debug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
+                Log.LogDebug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
                 result = null;
                 return false;
             }
