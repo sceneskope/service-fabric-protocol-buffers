@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.0" />
     <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="3.1.283" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0" />
-    <PackageReference Include="SceneSkope.HashingFunctions" Version="1.0.0-master-local-1295622-25" />
+    <PackageReference Include="SceneSkope.HashingFunctions" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
