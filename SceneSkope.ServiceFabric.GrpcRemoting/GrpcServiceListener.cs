@@ -48,7 +48,13 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            var serviceEndpoint = Context.CodePackageActivationContext.GetEndpoint(EndpointName);
+            var endpoints = Context.CodePackageActivationContext.GetEndpoints();
+
+            if (!endpoints.TryGetValue(EndpointName, out var serviceEndpoint))
+            {
+                Log.LogCritical("Failed to find endpoint for {EndpointName}", EndpointName);
+                throw new ArgumentException($"No endpoint for {EndpointName}");
+            }
             var port = serviceEndpoint.Port;
             var host = FabricRuntime.GetNodeContext().IPAddressOrFQDN;
 
@@ -87,7 +93,10 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             Log.LogDebug("Really stopping server - or at least trying");
             try
             {
-                await _server?.KillAsync();
+                if (_server != null)
+                {
+                    await _server.KillAsync().ConfigureAwait(false);
+                }
             }
             catch (Exception ex)
             {
