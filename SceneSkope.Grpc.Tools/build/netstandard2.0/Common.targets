@@ -1,0 +1,45 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);RCS1168</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProtocCodegen Include="*.proto" />
+  </ItemGroup>
+  <Target Name="GrpcSetup" BeforeTargets="BeforeClean;RunGrpc">
+    <ItemGroup>
+      <ProtocGenCs Include="@(ProtocCodegen -> '%(FileName).cs')">
+        <AutoGen>true</AutoGen>
+        <DependentUpon>%(FileName).proto</DependentUpon>
+      </ProtocGenCs>
+      <ProtocGenGrpcCs Include="@(ProtocCodegen -> '%(FileName)Grpc.cs')">
+        <DependentUpon>$([System.String]::Copy('%(FileName).proto').Replace("Grpc", ""))</DependentUpon>
+        <AutoGen>true</AutoGen>
+      </ProtocGenGrpcCs>
+    </ItemGroup>
+    <ItemGroup>
+      <FileWrites Include="@(ProtocGenCs);@(ProtocGenGrpcCs)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RunGrpc" Inputs="@(ProtocCodegen)" Outputs="@(ProtocGenCs);@(ProtocGenGrpcCs)" BeforeTargets="CoreCompile" 
+          DependsOnTargets="ResolvePackageDependenciesForBuild" Condition=" '@(ProtocCodegen)' != '' ">
+    <Error Text="Cannot use Grpc and ProtocolBuffer tools in same project. Remove one or the other"
+           Condition=" '$(_sk_protocolbuffers_tools_common_props_imported)' == 'true' " />
+    <Message Text="Running full Grpc build on @(ProtocCodegen)" Importance="High"/>
+    <PropertyGroup>
+      <GrpcTools>$(NugetPackageRoot)grpc.tools\$(GrpcToolVersion)</GrpcTools>
+      <ProtobufTools>$(NugetPackageRoot)google.protobuf.tools\$(ProtocolBuffersToolVersion)</ProtobufTools>
+    </PropertyGroup>
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <PropertyGroup>
+      <GrpcToolsPath>$(GrpcTools)\tools\$(GrpcToolOs)_$(GrpcToolArch)</GrpcToolsPath>
+      <ProtobufToolsPath>$(ProtobufTools)\tools\$(GrpcToolOs)_$(GrpcToolArch)</ProtobufToolsPath>
+      <ProtobufIncludePath>-I $(ProtobufTools)\tools</ProtobufIncludePath>
+    </PropertyGroup>
+    <Message Text="Cannot find grpc tools" Importance="High" Condition="!Exists('$(GrpcToolsPath)/protoc.exe')" />
+    <Message Text="Cannot find protobuf tools" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/protoc.exe')" />
+    <Exec Command="$(GrpcToolsPath)/protoc.exe -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . --grpc_out . %(ProtocCodegen.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/grpc_csharp_plugin.exe" 
+      Condition="Exists('$(GrpcToolsPath)/protoc.exe')" />
+  </Target>
+</Project>
