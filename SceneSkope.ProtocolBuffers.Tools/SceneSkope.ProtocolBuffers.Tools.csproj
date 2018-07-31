@@ -7,4 +7,8 @@
       <PackagePath>build</PackagePath>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf.Tools" Version="3.6.0" />
+  </ItemGroup>
+
 </Project>
