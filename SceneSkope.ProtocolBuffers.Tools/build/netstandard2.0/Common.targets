@@ -25,7 +25,7 @@
     <NoWarn>$(NoWarn);RCS1168</NoWarn>
   </PropertyGroup>
 
-  <Target Name="GenerateProtoCode" BeforeTargets="BeforeBuild" Outputs="@(ProtocGenCs)" BeforeTargets="CoreCompile"
+  <Target Name="GenerateProtoCode" BeforeTargets="BeforeBuild" Outputs="@(ProtocGenCs)"
           Condition=" '@(ProtoDef)' != '' ">
     <Message Text="Running protoc on @(ProtoDef)" Importance="High"/>
     <PropertyGroup>
@@ -36,7 +36,7 @@
       <ProtobufIncludePath>-I $(ProtobufTools)\tools</ProtobufIncludePath>
     </PropertyGroup>
     <Message Text="Cannot find protobuf tools @ $(ProtobufToolsPath)" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/protoc.exe')" />
-    <Exec Command="$(ProtobufToolsPath)/protoc.exe -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . %(ProtocCodegen.Identity)"
+    <Exec Command="$(ProtobufToolsPath)/protoc.exe -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . %(ProtoDef.Identity)"
       Condition="Exists('$(ProtobufToolsPath)/protoc.exe')" />
 
     <ItemGroup>
