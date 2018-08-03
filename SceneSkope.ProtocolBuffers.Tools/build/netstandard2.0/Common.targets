@@ -1,25 +1,33 @@
 ﻿<Project ToolsVersion="4.0" DefaultTargets="Build" 
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)SceneSkope.ProtocolBuffers.Tools.xaml" />
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)SceneSkope.ProtocolBuffers.Tools.ContentType.xaml" />
+    <AvailableItemName Include="ProtoDef"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CoreCompileDependsOn>
+      GenerateProtoCode;
+      $(CoreCompileDependsOn)
+    </CoreCompileDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProtocGenCs Include="@(ProtoDef -> '%(FileName).cs')">
+      <AutoGen>true</AutoGen>
+      <DependentUpon>%(FileName).proto</DependentUpon>
+    </ProtocGenCs>
+    <Compile Remove="@(ProtocGenCs)" />
+  </ItemGroup>
+
   <PropertyGroup>
     <NoWarn>$(NoWarn);RCS1168</NoWarn>
   </PropertyGroup>
-  <ItemGroup>
-    <ProtocCodegen Include="*.proto" />
-  </ItemGroup>
-  <Target Name="ProtocSetup" BeforeTargets="BeforeClean;RunProtoc">
-    <ItemGroup>
-      <ProtocGenCs Include="@(ProtocCodegen -> '%(FileName).cs')">
-        <AutoGen>true</AutoGen>
-        <DependentUpon>%(FileName).proto</DependentUpon>
-      </ProtocGenCs>
-    </ItemGroup>
-    <ItemGroup>
-      <FileWrites Include="@(ProtocGenCs)" />
-    </ItemGroup>
-  </Target>
-  <Target Name="RunProtoc" Inputs="@(ProtocCodegen)" Outputs="@(ProtocGenCs)" BeforeTargets="CoreCompile"
-          DependsOnTargets="ResolvePackageDependenciesForBuild" Condition=" '@(ProtocCodegen)' != '' ">
-    <Message Text="Running protoc on @(ProtocCodegen)" Importance="High"/>
+
+  <Target Name="GenerateProtoCode" BeforeTargets="BeforeBuild" Outputs="@(ProtocGenCs)" BeforeTargets="CoreCompile"
+          Condition=" '@(ProtoDef)' != '' ">
+    <Message Text="Running protoc on @(ProtoDef)" Importance="High"/>
     <PropertyGroup>
       <ProtobufTools>$(NugetPackageRoot)google.protobuf.tools\$(ProtocolBuffersToolVersion)</ProtobufTools>
     </PropertyGroup>
@@ -30,5 +38,9 @@
     <Message Text="Cannot find protobuf tools @ $(ProtobufToolsPath)" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/protoc.exe')" />
     <Exec Command="$(ProtobufToolsPath)/protoc.exe -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . %(ProtocCodegen.Identity)"
       Condition="Exists('$(ProtobufToolsPath)/protoc.exe')" />
+
+    <ItemGroup>
+      <Compile Include="@(ProtocGenCs)" />
+    </ItemGroup>
   </Target>
 </Project>
