@@ -15,7 +15,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
         // Summary:
         //     Services that will be exported by the server once started. Register a service
         //     with this server by adding its definition to this collection.
-        public IEnumerable<ServerServiceDefinition> Services { get; }
+        public Func<CancellationToken, IEnumerable<ServerServiceDefinition>> ServicesFactory { get; }
 
         public StatefulServiceContext Context { get; }
 
@@ -23,12 +23,13 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public string EndpointName { get; }
 
-        public GrpcServiceListener(StatefulServiceContext context, ILogger logger, IEnumerable<ServerServiceDefinition> services,
+
+        public GrpcServiceListener(StatefulServiceContext context, ILogger logger, Func<CancellationToken, IEnumerable<ServerServiceDefinition>> servicesFactory,
             string endpointName = "GrpcServiceEndpoint")
         {
             Context = context;
             Log = logger;
-            Services = services;
+            ServicesFactory = servicesFactory;
             EndpointName = endpointName;
         }
 
@@ -41,13 +42,16 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
         public Task CloseAsync(CancellationToken cancellationToken)
         {
             Log.LogDebug("Closing server");
+
             return StopServerAsync();
         }
 
         private Server _server;
+        private CancellationTokenSource _serviceCancellationTokenSource;
 
         public async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
+            _serviceCancellationTokenSource = new CancellationTokenSource();
             var endpoints = Context.CodePackageActivationContext.GetEndpoints();
 
             if (!endpoints.TryGetValue(EndpointName, out var serviceEndpoint))
@@ -65,7 +69,8 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
                 {
                     Ports = { new ServerPort(host, port, ServerCredentials.Insecure) }
                 };
-                foreach (var service in Services)
+                var services = ServicesFactory(_serviceCancellationTokenSource.Token);
+                foreach (var service in services)
                 {
                     server.Services.Add(service);
                 }
@@ -91,6 +96,9 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
         private async Task InternalStopServerAsync()
         {
             Log.LogDebug("Really stopping server - or at least trying");
+            var serviceCancellationTokenSource = _serviceCancellationTokenSource;
+            _serviceCancellationTokenSource = null;
+            serviceCancellationTokenSource.Cancel();
             try
             {
                 if (_server != null)
@@ -103,6 +111,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
                 Log.LogError(ex, "Failed to shutdown server: {Exception}", ex.Message);
             }
             Log.LogDebug("Probably shutdown");
+            serviceCancellationTokenSource.Dispose();
         }
     }
 }

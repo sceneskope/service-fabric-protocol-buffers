@@ -10,4 +10,16 @@
     <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.0</ProtocolBuffersToolVersion>
     <_sk_grpc_tools_common_props_imported>true</_sk_grpc_tools_common_props_imported>
   </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ProtoDef>
+      <Generator>MSBuild:GenerateProtoCode</Generator>
+    </ProtoDef>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <None Remove="**/*.proto"/>
+    <ProtoDef Include="**/*.proto"/>
+  </ItemGroup>
+
 </Project>
