@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Tools" Version="1.13.1" />
+    <PackageReference Include="Grpc.Tools" Version="1.14.1" />
     <PackageReference Include="Google.Protobuf.Tools" Version="3.6.0" />
   </ItemGroup>
 

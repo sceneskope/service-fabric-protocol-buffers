@@ -23,7 +23,6 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public string EndpointName { get; }
 
-
         public GrpcServiceListener(StatefulServiceContext context, ILogger logger, Func<CancellationToken, IEnumerable<ServerServiceDefinition>> servicesFactory,
             string endpointName = "GrpcServiceEndpoint")
         {

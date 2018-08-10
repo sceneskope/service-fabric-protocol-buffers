@@ -7,6 +7,11 @@ using System;
 
 namespace SceneSkope.ServiceFabric.GrpcRemoting
 {
+    public static class GrpcServiceProxyFactory
+    {
+        public static ServicePartitionKey GenerateKey(Guid id) => new ServicePartitionKey(Fnv1A.ComputeAllLong(id));
+    }
+
     public class GrpcServiceProxyFactory<TClient> where TClient : ClientBase<TClient>
     {
         public GrpcCommunicationClientFactory<TClient> CommunicationClientFactory { get; }
@@ -24,16 +29,6 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             ServiceUri = serviceUri;
             CommunicationClientFactory = new GrpcCommunicationClientFactory<TClient>(logger, channelCache, creator, servicePartitionResolver, null, traceId);
         }
-
-        private static ServicePartitionKey GenerateKey(Guid id) => new ServicePartitionKey(Fnv1A.ComputeAllLong(id));
-
-        public ServicePartitionClient<GrpcCommunicationClient<TClient>> CreateProxy(Guid id,
-            TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null) =>
-            CreateProxy(ServiceUri, GenerateKey(id), targetReplicaSelector, listenerName, retrySettings);
-
-        public ServicePartitionClient<GrpcCommunicationClient<TClient>> CreateProxy(Uri serviceUri, Guid id,
-            TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null) =>
-            CreateProxy(serviceUri, GenerateKey(id), targetReplicaSelector, listenerName, retrySettings);
 
         public ServicePartitionClient<GrpcCommunicationClient<TClient>> CreateProxy(ServicePartitionKey partitionKey = null,
             TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null) =>

@@ -6,7 +6,7 @@
     <GrpcToolArch Condition=" '$(TargetSDKArchitecture)' == 'amd64'">x64</GrpcToolArch>
     <GrpcToolOs Condition=" '$(GrpcToolOs)' == '' ">windows</GrpcToolOs>
     <GrpcToolArch Condition=" '$(GrpcToolArch)' == ''">x86</GrpcToolArch>
-    <GrpcToolVersion Condition=" '$(GrpcToolVersion)' == '' " >1.12.0</GrpcToolVersion>
+    <GrpcToolVersion Condition=" '$(GrpcToolVersion)' == '' " >1.14.1</GrpcToolVersion>
     <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.0</ProtocolBuffersToolVersion>
     <_sk_grpc_tools_common_props_imported>true</_sk_grpc_tools_common_props_imported>
   </PropertyGroup>
