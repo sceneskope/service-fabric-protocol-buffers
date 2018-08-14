@@ -15,7 +15,7 @@ $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 
 $branch = @{ $true = $envBranch; $false = $(git symbolic-ref --short -q HEAD) }[$envBranch -ne $NULL];
 $autoVersion = [math]::floor((New-TimeSpan $(Get-Date) $(Get-Date -month 1 -day 1 -year 2016 -hour 0 -minute 0 -second 0)).TotalMinutes * -1).ToString() + "-" + (Get-Date).ToString("ss")
-$revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $envBuildNumber, 10); $false = "local-$autoVersion" }[$envBuildNumber -ne $NULL -and $envBuildNumber -ne ""];
+$revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $envBuildNumber, 10); $false = "0-local-$autoVersion" }[$envBuildNumber -ne $NULL -and $envBuildNumber -ne ""];
 $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and -not $revision.StartsWith("local")]
 $packSuffix = @{ $true=""; $false="--version-suffix=$suffix"}[$suffix -eq ""]
 $commitHash = $(git rev-parse --short HEAD)
@@ -55,7 +55,7 @@ if ($CreatePackages) {
     mkdir -Force $packageOutputFolder | Out-Null
 
     Get-ChildItem $packageOutputFolder | Remove-Item
-    dotnet pack --output $packageOutputFolder -c $Configuration --no-build $packSuffix
+    dotnet pack --output $packageOutputFolder -c $Configuration --include-symbols --no-build $packSuffix
     if ($LastExitCode -ne 0) { 
         Write-Host "Error with pack, aborting build." -Foreground "Red"
         Exit 1
