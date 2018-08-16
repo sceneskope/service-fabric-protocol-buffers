@@ -35,9 +35,9 @@
       <ProtobufToolsPath>$(ProtobufTools)\tools\$(ProtocolBuffersToolOs)_$(ProtocolBuffersToolArch)</ProtobufToolsPath>
       <ProtobufIncludePath>-I $(ProtobufTools)\tools</ProtobufIncludePath>
     </PropertyGroup>
-    <Message Text="Cannot find protobuf tools @ $(ProtobufToolsPath)" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/protoc.exe')" />
-    <Exec Command="$(ProtobufToolsPath)/protoc.exe -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . %(ProtoDef.Identity)"
-      Condition="Exists('$(ProtobufToolsPath)/protoc.exe')" />
+    <Message Text="Cannot find protobuf tools @ $(ProtobufToolsPath)" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/$(ProtocToolName)')" />
+    <Exec Command="$(ProtobufToolsPath)/$(ProtocToolName) -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . %(ProtoDef.Identity)"
+      Condition="Exists('$(ProtobufToolsPath)/$(ProtocToolName)')" />
 
     <ItemGroup>
       <Compile Include="@(ProtocGenCs)" />

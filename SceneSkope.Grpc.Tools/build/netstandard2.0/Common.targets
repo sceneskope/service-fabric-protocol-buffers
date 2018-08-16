@@ -43,10 +43,10 @@
       <ProtobufToolsPath>$(ProtobufTools)\tools\$(GrpcToolOs)_$(GrpcToolArch)</ProtobufToolsPath>
       <ProtobufIncludePath>-I $(ProtobufTools)\tools</ProtobufIncludePath>
     </PropertyGroup>
-    <Message Text="Cannot find grpc tools" Importance="High" Condition="!Exists('$(GrpcToolsPath)/protoc.exe')" />
-    <Message Text="Cannot find protobuf tools" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/protoc.exe')" />
-    <Exec Command="$(GrpcToolsPath)/protoc.exe -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . --grpc_out . %(ProtoDef.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/grpc_csharp_plugin.exe" 
-      Condition="Exists('$(GrpcToolsPath)/protoc.exe')" />
+    <Message Text="Cannot find grpc tools" Importance="High" Condition="!Exists('$(GrpcToolsPath)/$(GrpcToolName)')" />
+    <Message Text="Cannot find protobuf tools" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/$(ProtocToolName)')" />
+    <Exec Command="$(GrpcToolsPath)/$(ProtocToolName) -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . --grpc_out . %(ProtoDef.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/$(GrpcToolName)" 
+      Condition="Exists('$(GrpcToolsPath)/$(ProtocToolName)')" />
 
     <ItemGroup>
       <Compile Remove="@(ProtocGenCs);@(ProtocGenGrpcCs)" />
