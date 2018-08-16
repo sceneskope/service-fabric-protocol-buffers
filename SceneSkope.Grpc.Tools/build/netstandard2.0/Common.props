@@ -2,13 +2,13 @@
 <Project ToolsVersion="12.0"
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <GrpcToolOs Condition=" '$(OS)' == 'Windows' ">windows</GrpcToolOs>
+    <GrpcToolOs Condition=" '$(OS)' == 'Windows_NT' ">windows</GrpcToolOs>
     <GrpcToolOs Condition=" '$(OS)' == 'Unix' ">linux</GrpcToolOs>
     <GrpcToolOs Condition=" '$(OS)' == 'OSX' ">macosx</GrpcToolOs>
-    <ProtocToolName Condition=" '$(OS)' == 'Windows' ">protoc.exe</ProtocToolName>
-    <ProtocToolName Condition=" '$(OS)' != 'Windows' ">protoc</ProtocToolName>
-    <GrpcToolName Condition=" '$(OS)' == 'Windows' ">grpc_csharp_plugin.exe</GrpccToolName>
-    <GrpcToolName Condition=" '$(OS)' != 'Windows' ">grpc_csharp_plugin</GrpcToolName>
+    <ProtocToolName Condition=" '$(OS)' == 'Windows_NT' ">protoc.exe</ProtocToolName>
+    <ProtocToolName Condition=" '$(OS)' != 'Windows_NT' ">protoc</ProtocToolName>
+    <GrpcToolName Condition=" '$(OS)' == 'Windows_NT' ">grpc_csharp_plugin.exe</GrpcToolName>
+    <GrpcToolName Condition=" '$(OS)' != 'Windows_NT' ">grpc_csharp_plugin</GrpcToolName>
 
     <GrpcToolArch>x64</GrpcToolArch>
     <GrpcToolVersion Condition=" '$(GrpcToolVersion)' == '' " >1.14.1</GrpcToolVersion>

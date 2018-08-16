@@ -2,12 +2,13 @@
 <Project ToolsVersion="12.0"
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProtocolBuffersToolOs Condition=" '$(OS)' == 'Windows' ">windows</ProtocolBuffersToolOs>
+    <ProtocolBuffersToolOs Condition=" '$(OS)' == 'Windows_NT' ">windows</ProtocolBuffersToolOs>
     <ProtocolBuffersToolOs Condition=" '$(OS)' == 'Unix' ">linux</ProtocolBuffersToolOs>
     <ProtocolBuffersToolOs Condition=" '$(OS)' == 'OSX' ">macosx</ProtocolBuffersToolOs>
-    <ProtocToolName Condition=" '$(OS)' == 'Windows' ">protoc.exe</ProtocToolName>
-    <ProtocToolName Condition=" '$(OS)' != 'Windows' ">protoc</ProtocToolName>
+    <ProtocToolName Condition=" '$(OS)' == 'Windows_NT' ">protoc.exe</ProtocToolName>
+    <ProtocToolName Condition=" '$(OS)' != 'Windows_NT' ">protoc</ProtocToolName>
     <ProtocolBuffersToolArch>x64</ProtocolBuffersToolArch>
+    <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.0</ProtocolBuffersToolVersion>
     <_sk_protocolbuffers_tools_common_props_imported>true</_sk_protocolbuffers_tools_common_props_imported>
 </PropertyGroup>
 

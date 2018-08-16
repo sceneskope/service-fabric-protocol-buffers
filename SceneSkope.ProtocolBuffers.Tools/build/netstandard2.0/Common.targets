@@ -14,11 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProtocGenCs Include="@(ProtoDef -> '%(FileName).cs')">
+    <ProtocGenCs Include="@(ProtoDef -> '%(FileName).cs')" />
+    <Compile Update="@(ProtocGenCs)">
       <AutoGen>true</AutoGen>
       <DependentUpon>%(FileName).proto</DependentUpon>
-    </ProtocGenCs>
-    <Compile Remove="@(ProtocGenCs)" />
+    </Compile>
+
   </ItemGroup>
 
   <PropertyGroup>
@@ -27,7 +28,6 @@
 
   <Target Name="GenerateProtoCode" BeforeTargets="BeforeBuild" Outputs="@(ProtocGenCs)"
           Condition=" '@(ProtoDef)' != '' ">
-    <Message Text="Running protoc on @(ProtoDef)" Importance="High"/>
     <PropertyGroup>
       <ProtobufTools>$(NugetPackageRoot)google.protobuf.tools\$(ProtocolBuffersToolVersion)</ProtobufTools>
     </PropertyGroup>
@@ -35,12 +35,9 @@
       <ProtobufToolsPath>$(ProtobufTools)\tools\$(ProtocolBuffersToolOs)_$(ProtocolBuffersToolArch)</ProtobufToolsPath>
       <ProtobufIncludePath>-I $(ProtobufTools)\tools</ProtobufIncludePath>
     </PropertyGroup>
-    <Message Text="Cannot find protobuf tools @ $(ProtobufToolsPath)" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/$(ProtocToolName)')" />
+    <Message Text="Cannot find protobuf tools @ $(ProtobufToolsPath)\$(ProtocToolName) $(OS)" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/$(ProtocToolName)')" />
     <Exec Command="$(ProtobufToolsPath)/$(ProtocToolName) -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . %(ProtoDef.Identity)"
       Condition="Exists('$(ProtobufToolsPath)/$(ProtocToolName)')" />
 
-    <ItemGroup>
-      <Compile Include="@(ProtocGenCs)" />
-    </ItemGroup>
   </Target>
 </Project>

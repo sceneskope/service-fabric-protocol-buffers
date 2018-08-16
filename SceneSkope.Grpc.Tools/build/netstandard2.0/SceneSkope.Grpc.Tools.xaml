@@ -10,5 +10,4 @@
     <Rule.DataSource>
         <DataSource Persistence="ProjectFile" ItemType="ProtoDef" />
     </Rule.DataSource>
-    <StringProperty Name="Namespace" DisplayName="Namespace" />
 </Rule>
