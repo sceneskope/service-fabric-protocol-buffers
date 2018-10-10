@@ -14,14 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProtocGenCs Include="@(ProtoDef -> '%(FileName).cs')">
+    <ProtocGenCs Include="@(ProtoDef -> '%(FileName).cs')" />
+    <ProtocGenGrpcCs Include="@(ProtoDef -> '%(FileName)Grpc.cs')" />
+    <Compile Update="@(ProtocGenCs)">
       <AutoGen>true</AutoGen>
       <DependentUpon>%(FileName).proto</DependentUpon>
-    </ProtocGenCs>
-    <ProtocGenGrpcCs Include="@(ProtoDef -> '%(FileName)Grpc.cs')">
-      <DependentUpon>$([System.String]::Copy('%(FileName).proto').Replace("Grpc", ""))</DependentUpon>
+    </Compile>
+    <Compile Update="@(ProtocGenGrpcCs)">
       <AutoGen>true</AutoGen>
-    </ProtocGenGrpcCs>
+      <DependentUpon>$([System.String]::Copy('%(FileName).proto').Replace("Grpc", ""))</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <PropertyGroup>
@@ -43,14 +45,10 @@
       <ProtobufToolsPath>$(ProtobufTools)\tools\$(GrpcToolOs)_$(GrpcToolArch)</ProtobufToolsPath>
       <ProtobufIncludePath>-I $(ProtobufTools)\tools</ProtobufIncludePath>
     </PropertyGroup>
-    <Message Text="Cannot find grpc tools" Importance="High" Condition="!Exists('$(GrpcToolsPath)/protoc.exe')" />
-    <Message Text="Cannot find protobuf tools" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/protoc.exe')" />
-    <Exec Command="$(GrpcToolsPath)/protoc.exe -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . --grpc_out . %(ProtoDef.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/grpc_csharp_plugin.exe" 
-      Condition="Exists('$(GrpcToolsPath)/protoc.exe')" />
+    <Message Text="Cannot find grpc tools: $(GrpcToolsPath)/$(GrpcToolName) $(OS)" Importance="High" Condition="!Exists('$(GrpcToolsPath)/$(GrpcToolName)')" />
+    <Message Text="Cannot find protobuf tools: $(ProtobufToolsPath)/$(ProtocToolName)" Importance="High" Condition="!Exists('$(ProtobufToolsPath)/$(ProtocToolName)')" />
+    <Exec Command="$(GrpcToolsPath)/$(ProtocToolName) -I . $(ProtobufIncludePath) $(ProtobufExtraIncludePath) --csharp_out . --grpc_out . %(ProtoDef.Identity) --plugin=protoc-gen-grpc=$(GrpcToolsPath)/$(GrpcToolName)" 
+      Condition="Exists('$(GrpcToolsPath)/$(ProtocToolName)')" />
 
-    <ItemGroup>
-      <Compile Remove="@(ProtocGenCs);@(ProtocGenGrpcCs)" />
-      <Compile Include="@(ProtocGenCs);@(ProtocGenGrpcCs)" />
-    </ItemGroup>
   </Target>
 </Project>

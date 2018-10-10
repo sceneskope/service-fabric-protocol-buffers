@@ -30,10 +30,6 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             CommunicationClientFactory = new GrpcCommunicationClientFactory<TClient>(logger, channelCache, creator, servicePartitionResolver, null, traceId);
         }
 
-        public ServicePartitionClient<GrpcCommunicationClient<TClient>> CreateProxy(ServicePartitionKey partitionKey = null,
-            TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null) =>
-            CreateProxy(ServiceUri, partitionKey, targetReplicaSelector, listenerName, retrySettings);
-
         public ServicePartitionClient<GrpcCommunicationClient<TClient>> CreateProxy(Uri serviceUri = null, ServicePartitionKey partitionKey = null,
             TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null, OperationRetrySettings retrySettings = null)
         {

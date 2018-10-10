@@ -20,28 +20,28 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
                 switch (rpcEx.Status.StatusCode)
                 {
                     case StatusCode.Unavailable when rpcEx.Status.Detail == "Endpoint read failed":
-                        Log.LogDebug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
-                        result = null;
-                        return false;
+                        Log.LogInformation(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
+                        result = new ExceptionHandlingThrowResult();
+                        return true;
 
                     case StatusCode.Unavailable:
                     case StatusCode.Unknown:
                     case StatusCode.Cancelled:
-                        Log.LogDebug(exceptionInformation.Exception, "Not transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
+                        Log.LogInformation(exceptionInformation.Exception, "Not transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
                         result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, false, retrySettings, int.MaxValue);
                         return true;
 
                     default:
-                        Log.LogDebug(exceptionInformation.Exception, "Transient exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
-                        result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, true, retrySettings, int.MaxValue);
+                        Log.LogInformation(exceptionInformation.Exception, "Unknown exception: {Exception}, Retry {@Retry}", exceptionInformation.Exception.Message, retrySettings);
+                        result = new ExceptionHandlingThrowResult();
                         return true;
                 }
             }
             else
             {
-                Log.LogDebug(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
-                result = null;
-                return false;
+                Log.LogInformation(exceptionInformation.Exception, "Throwing: {Exception}", exceptionInformation.Exception.Message);
+                result = new ExceptionHandlingThrowResult();
+                return true;
             }
         }
     }

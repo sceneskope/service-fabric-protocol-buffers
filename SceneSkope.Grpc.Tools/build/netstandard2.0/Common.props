@@ -2,10 +2,15 @@
 <Project ToolsVersion="12.0"
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <GrpcToolOs Condition=" '$(TargetPlatformIdentifier)' == 'Windows' ">windows</GrpcToolOs>
-    <GrpcToolArch Condition=" '$(TargetSDKArchitecture)' == 'amd64'">x64</GrpcToolArch>
-    <GrpcToolOs Condition=" '$(GrpcToolOs)' == '' ">windows</GrpcToolOs>
-    <GrpcToolArch Condition=" '$(GrpcToolArch)' == ''">x86</GrpcToolArch>
+    <GrpcToolOs Condition=" '$(OS)' == 'Windows_NT' ">windows</GrpcToolOs>
+    <GrpcToolOs Condition=" '$(OS)' == 'Unix' ">linux</GrpcToolOs>
+    <GrpcToolOs Condition=" '$(OS)' == 'OSX' ">macosx</GrpcToolOs>
+    <ProtocToolName Condition=" '$(OS)' == 'Windows_NT' ">protoc.exe</ProtocToolName>
+    <ProtocToolName Condition=" '$(OS)' != 'Windows_NT' ">protoc</ProtocToolName>
+    <GrpcToolName Condition=" '$(OS)' == 'Windows_NT' ">grpc_csharp_plugin.exe</GrpcToolName>
+    <GrpcToolName Condition=" '$(OS)' != 'Windows_NT' ">grpc_csharp_plugin</GrpcToolName>
+
+    <GrpcToolArch>x64</GrpcToolArch>
     <GrpcToolVersion Condition=" '$(GrpcToolVersion)' == '' " >1.14.1</GrpcToolVersion>
     <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.0</ProtocolBuffersToolVersion>
     <_sk_grpc_tools_common_props_imported>true</_sk_grpc_tools_common_props_imported>

@@ -2,10 +2,12 @@
 <Project ToolsVersion="12.0"
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProtocolBuffersToolOs Condition=" '$(TargetPlatformIdentifier)' == 'Windows' ">windows</ProtocolBuffersToolOs>
-    <ProtocolBuffersToolArch Condition=" '$(TargetSDKArchitecture)' == 'amd64'">x64</ProtocolBuffersToolArch>
-    <ProtocolBuffersToolOs Condition=" '$(ProtocolBuffersToolOs)' == '' ">windows</ProtocolBuffersToolOs>
-    <ProtocolBuffersToolArch Condition=" '$(ProtocolBuffersToolArch)' == ''">x86</ProtocolBuffersToolArch>
+    <ProtocolBuffersToolOs Condition=" '$(OS)' == 'Windows_NT' ">windows</ProtocolBuffersToolOs>
+    <ProtocolBuffersToolOs Condition=" '$(OS)' == 'Unix' ">linux</ProtocolBuffersToolOs>
+    <ProtocolBuffersToolOs Condition=" '$(OS)' == 'OSX' ">macosx</ProtocolBuffersToolOs>
+    <ProtocToolName Condition=" '$(OS)' == 'Windows_NT' ">protoc.exe</ProtocToolName>
+    <ProtocToolName Condition=" '$(OS)' != 'Windows_NT' ">protoc</ProtocToolName>
+    <ProtocolBuffersToolArch>x64</ProtocolBuffersToolArch>
     <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.0</ProtocolBuffersToolVersion>
     <_sk_protocolbuffers_tools_common_props_imported>true</_sk_protocolbuffers_tools_common_props_imported>
 </PropertyGroup>
