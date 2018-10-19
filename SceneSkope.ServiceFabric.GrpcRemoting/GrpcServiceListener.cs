@@ -4,6 +4,7 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,12 +24,21 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
 
         public string EndpointName { get; }
 
+        public IEnumerable<ChannelOption> ChannelOptions { get; }
+
         public GrpcServiceListener(StatefulServiceContext context, ILogger logger, Func<CancellationToken, IEnumerable<ServerServiceDefinition>> servicesFactory,
+            string endpointName = "GrpcServiceEndpoint") : 
+            this(context, logger, servicesFactory, Enumerable.Empty<ChannelOption>(), endpointName)
+        { }
+
+        public GrpcServiceListener(StatefulServiceContext context, ILogger logger, Func<CancellationToken, IEnumerable<ServerServiceDefinition>> servicesFactory,
+            IEnumerable<ChannelOption> channelOptions,
             string endpointName = "GrpcServiceEndpoint")
         {
             Context = context;
             Log = logger;
             ServicesFactory = servicesFactory;
+            ChannelOptions = channelOptions;
             EndpointName = endpointName;
         }
 
@@ -64,7 +74,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             Log.LogDebug("Starting gRPC server on http://{Host}:{Port}", host, port);
             try
             {
-                var server = new Server
+                var server = new Server(ChannelOptions)
                 {
                     Ports = { new ServerPort(host, port, ServerCredentials.Insecure) }
                 };

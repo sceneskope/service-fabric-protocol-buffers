@@ -3,7 +3,9 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Fabric;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SceneSkope.ServiceFabric.GrpcRemoting
@@ -116,7 +118,9 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
             }
         }
 
-        public ChannelEntry GetOrCreate(string endpoint)
+        public ChannelEntry GetOrCreate(string endpoint) => GetOrCreate(endpoint, Enumerable.Empty<ChannelOption>());
+
+        public ChannelEntry GetOrCreate(string endpoint, IEnumerable<ChannelOption> channelOptions)
         {
             var attempt = 0;
             while (attempt++ < 2)
@@ -128,7 +132,7 @@ namespace SceneSkope.ServiceFabric.GrpcRemoting
                         Log.LogDebug("{CacheId}: Creating a new channel for {Endpoint}", Id, endpoint);
                         cacheEntry.SetOptions(CreateOptions());
                         var channelAddress = endpoint.Replace("http://", string.Empty);
-                        var channel = new Channel(channelAddress, ChannelCredentials.Insecure);
+                        var channel = new Channel(channelAddress, ChannelCredentials.Insecure, channelOptions);
                         var newEntry = new ChannelEntry(channel);
                         Log.LogDebug("{CacheId}: Created new channel for {Endpoint} as {Id}", Id, endpoint, newEntry.Id);
                         return newEntry;
