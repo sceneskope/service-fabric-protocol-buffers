@@ -14,7 +14,7 @@
     <ItemGroup>
     <PackageReference Include="Roslynator.Analyzers" Version="1.9.0" PrivateAssets="All" />
     <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180" PrivateAssets="All" />
-    <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.1.10" PrivateAssets="All" />      
+    <!-- <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.1.10" PrivateAssets="All" />       -->
   </ItemGroup>
   <ItemGroup Condition="'$(IsTestProject)' != 'true' and '$(IsPackable)' != 'false'">
     <PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.3" PrivateAssets="All" />
