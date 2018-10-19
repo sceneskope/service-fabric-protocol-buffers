@@ -8,7 +8,7 @@
     <ProtocToolName Condition=" '$(OS)' == 'Windows_NT' ">protoc.exe</ProtocToolName>
     <ProtocToolName Condition=" '$(OS)' != 'Windows_NT' ">protoc</ProtocToolName>
     <ProtocolBuffersToolArch>x64</ProtocolBuffersToolArch>
-    <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.0</ProtocolBuffersToolVersion>
+    <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.1</ProtocolBuffersToolVersion>
     <_sk_protocolbuffers_tools_common_props_imported>true</_sk_protocolbuffers_tools_common_props_imported>
 </PropertyGroup>
 

@@ -11,8 +11,8 @@
     <GrpcToolName Condition=" '$(OS)' != 'Windows_NT' ">grpc_csharp_plugin</GrpcToolName>
 
     <GrpcToolArch>x64</GrpcToolArch>
-    <GrpcToolVersion Condition=" '$(GrpcToolVersion)' == '' " >1.14.1</GrpcToolVersion>
-    <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.0</ProtocolBuffersToolVersion>
+    <GrpcToolVersion Condition=" '$(GrpcToolVersion)' == '' " >1.15.0</GrpcToolVersion>
+    <ProtocolBuffersToolVersion Condition=" '$(ProtoToolVersion)' == '' ">3.6.1</ProtocolBuffersToolVersion>
     <_sk_grpc_tools_common_props_imported>true</_sk_grpc_tools_common_props_imported>
   </PropertyGroup>
 
