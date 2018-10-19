@@ -13,7 +13,7 @@ namespace SceneSkope.ProtocolBuffers
             return new ArraySegment<byte>(buffer, 0, (int)stream.Position);
         }
 
-        public static bool TryDeserialize<T>(ArraySegment<byte> buffer, out T value, out Exception exception)
+        public static bool TryDeserialize<T>(in ArraySegment<byte> buffer, out T value, out Exception exception)
             where T : IMessage<T>, new()
         {
             try
